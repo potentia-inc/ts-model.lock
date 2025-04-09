@@ -1,6 +1,6 @@
 {
   "name": "@potentia/model.lock",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "model.lock",
   "main": "./index.js",
   "scripts": {
@@ -31,7 +31,7 @@
     "typescript-eslint": "^8.0.0"
   },
   "peerDependencies": {
-    "@potentia/model": "github:potentia-inc/ts-model#semver:^1.0.0"
+    "@potentia/model": "github:potentia-inc/ts-model#semver:^2.0.0"
   },
   "type": "module",
   "exports": {

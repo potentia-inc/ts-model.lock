@@ -62,12 +62,19 @@ export type LockInsert = {
 export type LockUpdate = {
     expiresAt: Date;
 };
-export declare class Locks extends Models<LockDoc, Lock, LockQuery, LockInsert, LockUpdate> {
+export type LockSort = {
+    createdAt?: 'asc' | 'desc';
+    expiresAt?: 'asc' | 'desc';
+};
+export declare class Locks extends Models<LockDoc, Lock, LockQuery, LockInsert, LockUpdate, LockSort> {
     get name(): string;
     $model(doc: LockDoc): Lock;
     $query(query: LockQuery): Filter<LockDoc>;
     $insert(values: LockInsert): InsertionOf<LockDoc>;
     $set(values: LockUpdate): UpdateFilter<LockDoc>;
+    $sort(sort?: LockSort): {
+        [x: string]: NonNullable<"asc" | "desc">;
+    } | undefined;
     trylock(values: LockInsert, options?: Options): Promise<LockOrNil>;
     relock(lock: Lock, values: LockUpdate, options?: Options): Promise<Lock>;
     lock<T>(key: string, exec: (signal: AbortSignal) => Promise<T>, options?: {

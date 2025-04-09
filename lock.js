@@ -3,6 +3,7 @@ import { LockError, RelockError, UnlockError, getMessage } from './error.js';
 import { Nil, isNullish } from './type.js';
 import { sleep } from './util.js';
 import { Model, Models, pickIdOrNil, STRING_DOC_SCHEMA, isDuplicationError, } from './model.js';
+import { option } from './util.js';
 export const LOCK_NAME = 'locks';
 export class Lock extends Model {
     expiresAt;
@@ -47,6 +48,14 @@ export class Locks extends Models {
     }
     $set(values) {
         return { expires_at: values.expiresAt };
+    }
+    $sort(sort) {
+        if (isNullish(sort))
+            return Nil;
+        return {
+            ...option('created_at', sort.createdAt),
+            ...option('expires_at', sort.expiresAt),
+        };
     }
     async trylock(values, options = {}) {
         const $now = options.$now ?? new Date();
