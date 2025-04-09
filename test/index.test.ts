@@ -45,12 +45,23 @@ describe('lock', () => {
     expect(await LOCKS.lock(id, exec)).toBe(true)
     expect(await promise).toBe(true)
 
-    const lock = await LOCKS.insertOne({ id: randStr(), expiresAt: new Date() })
+    const lock = await LOCKS.insertOne({
+      id: randStr(),
+      expiresAt: new Date(Date.now() + 10000),
+    })
     expect(await LOCKS.findOne({ id: lock.id })).toMatchObject({
       id: lock.id,
       expiresAt: expect.toEqualDate(lock.expiresAt),
       createdAt: expect.toBeDate(),
     })
+
+    expect(await LOCKS.findMany()).toHaveLength(1)
+    expect(
+      await LOCKS.findMany({}, { sort: { createdAt: 'asc' } }),
+    ).toHaveLength(1)
+    expect(
+      await LOCKS.findMany({}, { sort: { expiresAt: 'asc' } }),
+    ).toHaveLength(1)
   })
 
   test('user exception', async () => {
