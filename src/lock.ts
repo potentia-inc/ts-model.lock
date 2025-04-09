@@ -15,6 +15,7 @@ import {
   UpdateFilter,
   isDuplicationError,
 } from './model.js'
+import { option } from './util.js'
 
 export const LOCK_NAME = 'locks'
 export type LockOrId = ModelOrId<LockDoc, Lock>
@@ -69,13 +70,18 @@ export type LockInsert = {
 export type LockUpdate = {
   expiresAt: Date
 }
+export type LockSort = {
+  createdAt?: 'asc' | 'desc'
+  expiresAt?: 'asc' | 'desc'
+}
 
 export class Locks extends Models<
   LockDoc,
   Lock,
   LockQuery,
   LockInsert,
-  LockUpdate
+  LockUpdate,
+  LockSort
 > {
   get name(): string {
     return LOCK_NAME
@@ -95,6 +101,14 @@ export class Locks extends Models<
 
   $set(values: LockUpdate): UpdateFilter<LockDoc> {
     return { expires_at: values.expiresAt }
+  }
+
+  $sort(sort?: LockSort) {
+    if (isNullish(sort)) return Nil
+    return {
+      ...option('created_at', sort.createdAt),
+      ...option('expires_at', sort.expiresAt),
+    }
   }
 
   async trylock(values: LockInsert, options: Options = {}): Promise<LockOrNil> {
